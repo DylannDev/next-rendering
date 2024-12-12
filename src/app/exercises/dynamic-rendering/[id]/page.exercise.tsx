@@ -1,13 +1,41 @@
 import RenderTime from '@/components/render-time'
-// 🐶 Importe `getPostById` la fonction qui accède à la BDD.
-// 🤖 import {getPostById} from '@/db/sgbd'
+import {getPostById, getPosts} from '@/db/sgbd'
+import {Metadata} from 'next'
+import {notFound} from 'next/navigation'
+
+export async function generateMetadata(props: {
+  params: Promise<{id: string}>
+}): Promise<Metadata> {
+  const params = await props.params
+  const post = await getPostById(params.id)
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'This post does not exist.',
+    }
+  }
+
+  return {
+    title: post.title,
+    description: 'A detailed post on a specific topic.',
+  }
+}
+
+export const revalidate = 10
+
+export async function generateStaticParams() {
+  const posts = await getPosts()
+  return posts?.map((post) => ({
+    params: {id: post.id},
+  }))
+}
 
 const Page = async (props: {params: Promise<{id: string}>}) => {
   const params = await props.params //next 15
-  //🐶 Remplace ce tableau par l'appel à la fonction `getPostById` avec l'ID de l'article.
-  const post = {id: `${params.id}`, title: 'FAKE POST'}
-  // 🐶 Affiche une page 404 si l'id de post n'existe pas en BDD
-  // 🤖 if (!post) notFound()
+
+  const post = await getPostById(params.id)
+  if (!post) notFound()
 
   return (
     <div className="mx-auto max-w-4xl p-6 text-lg">
