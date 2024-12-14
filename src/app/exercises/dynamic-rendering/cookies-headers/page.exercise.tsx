@@ -1,20 +1,15 @@
 import RenderTime from '@/components/render-time'
 import {getPosts} from '@/db/sgbd'
 import {Post} from '@/lib/type'
-// 🐶 Importe cookies de 'next/headers'
-
-// 🤖 import {cookies} from 'next/headers'
+import {cookies} from 'next/headers'
 
 const Page = async () => {
   const posts = await getPosts()
 
-  // https://nextjs.org/docs/app/api-reference/functions/cookies
-  // 🐶 Recupère les cookies
-  // const cookieStore =  ...
+  const cookieStore = await cookies()
+  const uid = cookieStore.get('userid')?.value ?? undefined
 
-  // 🐶 Récupere la valeur de 'userid' dans 'cookieStore'
-
-  // 🐶 Si 'userid' n'est pas renseigné (pas de user), vider posts
+  if (!uid) posts.length = 0
 
   return (
     <div className="mx-auto max-w-4xl p-6 text-lg">
