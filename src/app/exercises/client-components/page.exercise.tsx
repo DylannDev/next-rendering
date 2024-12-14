@@ -1,8 +1,8 @@
 import RenderTime from '@/components/render-time'
 import {getPosts} from '@/db/sgbd'
 
-// 🐶 Importe le `RCC counter`
-//import {Counter} from './rcc-counter'
+import {Counter} from './rcc-counter'
+import ExternalLib from './client-lib-wrapper'
 
 export default async function Page() {
   const posts = await getPosts()
@@ -15,6 +15,8 @@ export default async function Page() {
         il y a {posts.length} posts
       </h2>
       {/* 🐶 Appelle ici le composant <Counter>*/}
+      <Counter />
+      <ExternalLib defaultDelay={100} />
       {/* 🐶 En cas de problème, va corriger le composant counter*/}
       <RenderTime name="Page" />
     </div>
